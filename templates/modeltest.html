@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #6E93F7, #A4E6FA);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .upload-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .flash-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            text-align: left;
+        }
+        
+        .flash-message ul {
+            list-style-type: none;
+        }
+        
+        .flash-message li {
+            font-size: 14px;
+        }
+        .custom-file-upload {
+            display: inline-block;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 30px;
+            background-color: #6E93F7;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: background 0.3s ease;
+        }
+        
+        .custom-file-upload:hover {
+            background-color: #536ecf;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .upload-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            background-color: #218838;
+        }
+        
+        .upload-btn:active {
+            transform: scale(0.98);
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="upload-container">
+        <h1>Plastic Detector</h1>
+         <!-- Flash message block -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-message">
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+        <h2>Upload Your File</h2>
+        <form action="{{ url_for('test_view') }}" method="post" enctype="multipart/form-data">
+            <label class="custom-file-upload">
+                <input type="file" name="file" id="file">
+                Choose File
+            </label>
+            <input type="submit" value="Detect" class="upload-btn">
+        </form>
+    </div>
+</body>
+</html>

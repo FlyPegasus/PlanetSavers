@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "inferencejs": "^1.0.16"
+  }
+}
