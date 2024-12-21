@@ -2,12 +2,16 @@ from flask import Flask, render_template, request, url_for, flash, redirect
 import os
 from inference_sdk import InferenceHTTPClient
 import cv2
+import plastic_detector
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
+app.config['PROCESSED_FOLDER'] = 'processed/'
 app.config['ALLOWED_EXTENSIONS'] = {'jpg', 'jpeg'}
+
+# allowed file extension checker method
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
@@ -33,10 +37,14 @@ def plastic_view():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = file.filename
-            print(filename)
+            #print(filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             flash('File successfully uploaded')
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image = plastic_detector.transform(file_path)
+            cv2.imwrite(os.path.join(app.config['PROCESSED_FOLDER'] , 'detected_' + filename), image)
+            img_path = os.path.join(app.config['PROCESSED_FOLDER'] , 'detected_' + filename)
+            return render_template("plastic_detected.html", image_path = img_path)
         else:
             flash('File not supported!')
     return render_template("plastic.html", title="plastic")
@@ -59,9 +67,7 @@ def test_view():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = file.filename
-            print(filename)
-            path1 = r"E:\Project\Final Year\PlanetSavers\uploaded_images"
-            file.save(os.path.join(path1, filename))
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             flash('File successfully uploaded')
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             CLIENT = InferenceHTTPClient(
@@ -70,8 +76,7 @@ def test_view():
             )
 
             result = CLIENT.infer(file_path, model_id="tree-counting-qiw3h/1")
-            path2 = r"E:\Project\Final Year\PlanetSavers\transformed_images"
-            cv2.imwrite(os.path.join(path2 , 'waka.jpg'), result)
+            cv2.imwrite(os.path.join(app.config['PROCESSED_FOLDER'] , 'waka.jpg'), result)
             #cv2.waitKey(0)
         else:
             flash('File not supported!')
